@@ -105,44 +105,40 @@
 
       // ✅ Auth functions
       window.authenticateUser = function () {
-        const email = document.getElementById("email").value;
-        const password = document.getElementById("password").value;
+        const email = document.getElementById("email").value.trim();
+        const password = document.getElementById("password").value.trim();
+
+        console.log("Trying to sign in with:", email);
 
         auth.signInWithEmailAndPassword(email, password)
           .then((userCredential) => {
             const user = userCredential.user;
-
             if (!user.emailVerified) {
-              user.sendEmailVerification(); // Re-send if needed
+              user.sendEmailVerification();
               alert("Email not verified. A new verification link has been sent.");
               return;
             }
-
-            // Verified users go to dashboard
             window.location.href = "/dashboard";
           })
           .catch((error) => {
+            console.error("Sign in error:", error.code, error.message);
+
             if (error.code === "auth/user-not-found") {
-              // Register the user
+              // Try to register
               auth.createUserWithEmailAndPassword(email, password)
                 .then((newUser) => {
                   newUser.user.sendEmailVerification();
                   alert("New user created. Verification email sent. Please verify and log in.");
                 })
                 .catch((regError) => {
+                  console.error("Registration failed:", regError.code, regError.message);
                   alert("Registration failed: " + regError.message);
                 });
-            } else if (error.code === "auth/wrong-password") {
-              alert("Wrong password! Please try again.");
-            } else if (error.code === "auth/invalid-email") {
-              alert("Invalid email address.");
             } else {
               alert("Login failed: " + error.message);
             }
           });
-
       };
-
 
       window.loginWithGoogle = function () {
         const provider = new firebase.auth.GoogleAuthProvider();
