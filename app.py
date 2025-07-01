@@ -85,10 +85,12 @@ def get_diaries():
     return jsonify(diary_list)
 
 @app.route('/delete_diary/<diary_id>', methods=['DELETE'])
+@login_required
 def delete_diary(diary_id):
     try:
-        # Example assuming you're using Firestore or SQLAlchemy
-        diary_ref = db.collection('diaries').document(diary_id)
+        user_id = session['user']['uid']
+        diary_ref = db.collection('users').document(user_id).collection('diaries').document(diary_id)
+        
         if diary_ref.get().exists:
             diary_ref.delete()
             return jsonify({'success': True})
@@ -97,6 +99,7 @@ def delete_diary(diary_id):
     except Exception as e:
         print("Error deleting diary:", e)
         return jsonify({'success': False, 'message': str(e)}), 500
+
 
 
 @app.route('/create_entry')
