@@ -150,30 +150,30 @@
             fetch('/api/diaries')
                 .then(res => res.json())
                 .then(diaries => {
-                    const grid = document.getElementById('diaryGrid');
-                    grid.innerHTML = "";
+                    const grid = document.querySelector('.grid');
+                    grid.innerHTML = "";  // Clear existing
 
                     diaries.forEach(d => {
                         const card = document.createElement('div');
-                        card.className = `relative bg-white rounded-xl shadow diary-card overflow-hidden ${getThemeClass(d.theme)}`;
-                        card.style.cursor = 'pointer';
-                        card.onclick = () => openDiary(d.id);
-
+                        card.className = `relative rounded-xl shadow diary-card overflow-hidden cursor-pointer`;
+                        card.setAttribute("onclick", `window.location.href='/diary/${d.id}'`);
                         card.innerHTML = `
-                            <button onclick="event.stopPropagation(); deleteDiary('${d.id}')"
-                                    class="absolute top-2 right-2 bg-red-500 hover:bg-red-600 text-white p-1 rounded-full z-10">
-                                🗑️
-                            </button>
-                            <img src="/static/images/diary_cover.jpg" alt="Diary" class="w-full h-40 object-cover" />
-                            <div class="p-4">
-                                <h3 class="font-bold text-lg">${d.title}</h3>
-                                <p class="text-sm text-gray-600">Last edited: ${new Date(d.last_edited).toLocaleDateString()}</p>
-                            </div>
-                        `;
+                    <div class="w-full h-40 bg-cover bg-center" style="background-image: url('${getThemeImage(d.theme)}')"></div>
+                    <div class="absolute top-2 right-2">
+                        <button onclick="event.stopPropagation(); deleteDiary('${d.id}')" class="text-white bg-red-500 hover:bg-red-600 rounded-full p-1">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M6 4a1 1 0 011-1h6a1 1 0 011 1v1h3a1 1 0 010 2h-1v10a2 2 0 01-2 2H6a2 2 0 01-2-2V7H3a1 1 0 110-2h3V4zm2 3a1 1 0 10-2 0v8a1 1 0 102 0V7zm4 0a1 1 0 10-2 0v8a1 1 0 102 0V7z" clip-rule="evenodd" />
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="absolute bottom-0 left-0 right-0 bg-black/60 text-white p-3">
+                        <h3 class="font-bold text-lg">${d.title}</h3>
+                        <p class="text-sm">Last edited: ${new Date(d.last_edited).toLocaleDateString()}</p>
+                    </div>
+                `;
                         grid.appendChild(card);
                     });
-                })
-                .catch(err => console.error("Fetch diaries error:", err));
+                });
         }
 
         function deleteDiary(id) {
@@ -207,4 +207,5 @@
         document.addEventListener('DOMContentLoaded', fetchDiaries);
     </script>
 </body>
+
 </html>
