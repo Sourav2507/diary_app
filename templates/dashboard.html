@@ -44,7 +44,6 @@
 </head>
 
 <body class="bg-white min-h-screen flex flex-col">
-
     <!-- Fixed Navbar -->
     <header
         class="fixed top-0 left-0 right-0 bg-white z-50 shadow-sm flex items-center justify-between px-10 py-4 border-b border-gray-200">
@@ -62,52 +61,19 @@
             <button onclick="openModal()" class="px-4 py-2 bg-[#5e92c9] text-white rounded-full text-sm font-bold">
                 Create Diary
             </button>
-            <button class="p-2 bg-gray-100 text-[#121416] rounded-full font-bold">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20px" height="20px" fill="currentColor"
-                    viewBox="0 0 256 256">
-                    <path
-                        d="M224,128a8,8,0,0,1-8,8H136v80a8,8,0,0,1-16,0V136H40a8,8,0,0,1,0-16h80V40a8,8,0,0,1,16,0v80h80A8,8,0,0,1,224,128Z" />
-                </svg>
-            </button>
         </div>
     </header>
 
     <!-- Content Area -->
     <main class="flex-1 pt-24 pb-12 px-6 sm:px-12 relative bg-gray-50">
-        <!-- Soft Background Image -->
+        <!-- Background Image -->
         <div class="absolute inset-0 bg-cover bg-center opacity-20 z-0"
             style="background-image: url('https://images.unsplash.com/photo-1509021436665-8f07dbf5bf1d?auto=format&fit=crop&w=1950&q=80');">
         </div>
 
-        <!-- Diaries Area -->
         <div class="relative z-10">
-            <!-- No Diaries Message -->
-            <div class="mb-10">
-                <div class="flex flex-col gap-4 bg-white/90 backdrop-blur-md p-6 rounded-xl shadow max-w-md">
-                    <div class="aspect-video bg-center bg-cover rounded-xl shadow"
-                        style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCjpG3h09dZzBvZTxZ3Rqb9fskXpYApxNeunjc9VGK3yuc6WGJV9IKC2YrwUT4K1qdodE4LW2HL66OVv7d4B6bp5wkb845rL0ul6_jwSApzept3KjPXk3b_y4C-LMtIfNwf7Dh5PphZADeYvTWBsyLYSojJDScpToHQ-xxL4wRvqoRRM3z1b72mw8r-g5H3GT0SOvpds4KBkFmKd5eE5snI8yP48NoRX6sE-0ChTI7USVJhXBU32careWNoNj2QEgB1dI0CAke3C5M');">
-                    </div>
-                    <p class="text-lg font-bold text-center text-gray-800">No diaries yet. Create your first one!</p>
-                    <p class="text-sm text-gray-600 text-center">Start documenting your thoughts and experiences.</p>
-                    <button onclick="openModal()"
-                        class="bg-[#5e92c9] text-white px-4 py-2 rounded-full font-semibold shadow hover:bg-[#4a7bb4] transition">
-                        Create Diary
-                    </button>
-                </div>
-            </div>
-
-            <!-- Diary Cards Grid -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 items-start">
-                <!-- Example Card -->
-                <div class="bg-white rounded-xl shadow diary-card overflow-hidden">
-                    <img src="/static/images/diary_cover.jpg" alt="Diary" class="w-full h-40 object-cover" />
-                    <div class="p-4">
-                        <h3 class="font-bold text-lg text-gray-800">My Travel Diary</h3>
-                        <p class="text-sm text-gray-600">Last edited on: Jun 30, 2025</p>
-                    </div>
-                </div>
-
-                <!-- More cards via Jinja later -->
+            <div id="diaryGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 items-start">
+                <!-- Cards will be populated here -->
             </div>
         </div>
     </main>
@@ -169,7 +135,7 @@
                 .then(data => {
                     if (data.success) {
                         closeModal();
-                        fetchDiaries();  // Refresh UI
+                        fetchDiaries();
                     } else {
                         alert("Failed to create diary.");
                     }
@@ -184,22 +150,52 @@
             fetch('/api/diaries')
                 .then(res => res.json())
                 .then(diaries => {
-                    const grid = document.querySelector('.grid');
-                    grid.innerHTML = "";  // Clear existing
+                    const grid = document.getElementById('diaryGrid');
+                    grid.innerHTML = "";
 
                     diaries.forEach(d => {
                         const card = document.createElement('div');
-                        card.className = `bg-white rounded-xl shadow diary-card overflow-hidden ${getThemeClass(d.theme)}`;
+                        card.className = `relative bg-white rounded-xl shadow diary-card overflow-hidden ${getThemeClass(d.theme)}`;
+                        card.style.cursor = 'pointer';
+                        card.onclick = () => openDiary(d.id);
+
                         card.innerHTML = `
-                    <img src="/static/images/diary_cover.jpg" alt="Diary" class="w-full h-40 object-cover" />
-                    <div class="p-4">
-                        <h3 class="font-bold text-lg">${d.title}</h3>
-                        <p class="text-sm text-gray-600">Last edited: ${new Date(d.last_edited).toLocaleDateString()}</p>
-                    </div>
-                `;
+                            <button onclick="event.stopPropagation(); deleteDiary('${d.id}')"
+                                    class="absolute top-2 right-2 bg-red-500 hover:bg-red-600 text-white p-1 rounded-full z-10">
+                                🗑️
+                            </button>
+                            <img src="/static/images/diary_cover.jpg" alt="Diary" class="w-full h-40 object-cover" />
+                            <div class="p-4">
+                                <h3 class="font-bold text-lg">${d.title}</h3>
+                                <p class="text-sm text-gray-600">Last edited: ${new Date(d.last_edited).toLocaleDateString()}</p>
+                            </div>
+                        `;
                         grid.appendChild(card);
                     });
+                })
+                .catch(err => console.error("Fetch diaries error:", err));
+        }
+
+        function deleteDiary(id) {
+            if (!confirm("Delete this diary?")) return;
+
+            fetch(`/delete_diary/${id}`, { method: 'DELETE' })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        fetchDiaries();
+                    } else {
+                        alert("Failed to delete diary.");
+                    }
+                })
+                .catch(err => {
+                    console.error("Delete error:", err);
+                    alert("Something went wrong.");
                 });
+        }
+
+        function openDiary(id) {
+            window.location.href = `/diary/${id}`;
         }
 
         function getThemeClass(theme) {
@@ -210,8 +206,5 @@
 
         document.addEventListener('DOMContentLoaded', fetchDiaries);
     </script>
-
-
 </body>
-
 </html>
