@@ -1,9 +1,10 @@
 import os
 import json
-from flask import Flask, render_template, redirect, request, session, url_for,jsonify
+from flask import Flask, render_template, redirect, request, session, url_for, jsonify
 import firebase_admin
-from firebase_admin import credentials, auth,firestore
+from firebase_admin import credentials, auth, firestore
 from functools import wraps
+from datetime import datetime
 
 # 🔐 Load Firebase credentials from environment
 firebase_json = os.environ.get("FIREBASE_CREDENTIALS_JSON")
@@ -16,10 +17,8 @@ db = firestore.client()
 # 🔧 Flask app setup
 app = Flask(__name__)
 app.secret_key = os.environ.get("FLASK_SECRET_KEY", "default_secret_key")
-
-# ✅ Recommended session configs for HTTPS deployment (e.g., Render)
-app.config['SESSION_COOKIE_SECURE'] = True  # for HTTPS
-app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'  # safe default for most use cases
+app.config['SESSION_COOKIE_SECURE'] = True
+app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
 
 # 🔐 Login required decorator
 def login_required(f):
@@ -47,8 +46,6 @@ def authenticate():
 def dashboard():
     return render_template('dashboard.html')
 
-from flask import jsonify
-
 @app.route('/create_diary', methods=['POST'])
 @login_required
 def create_diary():
@@ -57,7 +54,6 @@ def create_diary():
     theme = data.get('theme')
 
     user_id = session['user']['uid']
-
     diary_ref = db.collection('users').document(user_id).collection('diaries').document()
     diary_ref.set({
         'title': title,
@@ -90,7 +86,6 @@ def delete_diary(diary_id):
     try:
         user_id = session['user']['uid']
         diary_ref = db.collection('users').document(user_id).collection('diaries').document(diary_id)
-        
         if diary_ref.get().exists:
             diary_ref.delete()
             return jsonify({'success': True})
@@ -100,20 +95,80 @@ def delete_diary(diary_id):
         print("Error deleting diary:", e)
         return jsonify({'success': False, 'message': str(e)}), 500
 
-
-
-@app.route('/create_entry')
+@app.route('/diary/<diary_id>')
 @login_required
-def create_entry():
-    return render_template('create_entry.html')
+def diary_page(diary_id):
+    user_id = session['user']['uid']
+    diary_ref = db.collection('users').document(user_id).collection('diaries').document(diary_id)
+    diary_doc = diary_ref.get()
+
+    if not diary_doc.exists:
+        return "Diary not found", 404
+
+    diary_data = diary_doc.to_dict()
+    title = diary_data.get('title', 'Untitled Diary')
+    theme = diary_data.get('theme', 'default_theme')
+
+    entries_ref = diary_ref.collection('entries').order_by('created_at', direction=firestore.Query.DESCENDING)
+    entries_docs = entries_ref.stream()
+
+    entries = []
+    for doc in entries_docs:
+        data = doc.to_dict()
+        created_at = data.get('created_at')
+        if created_at:
+            created_at = created_at.strftime('%B %d, %Y')
+        entries.append({
+            'date': created_at or 'Unknown Date',
+            'content': data.get('content', '')
+        })
+
+    def get_theme_image(theme_name):
+        return {
+            'sunset': '/static/images/sunset.jpg',
+            'ocean': '/static/images/ocean.jpg',
+            'mountains': '/static/images/mountains.jpg',
+            'default_theme': '/static/images/default.jpg'
+        }.get(theme_name, '/static/images/default.jpg')
+
+    background_url = get_theme_image(theme)
+
+    return render_template(
+        'diary_page.html',
+        diary_id=diary_id,
+        diary_title=title,
+        background_image_url=background_url,
+        entries=entries
+    )
+
+@app.route('/add_entry/<diary_id>', methods=['POST'])
+@login_required
+def add_entry(diary_id):
+    user_id = session['user']['uid']
+    content = request.form.get('content')
+
+    if not content:
+        return redirect(url_for('diary_page', diary_id=diary_id))
+
+    entry_ref = db.collection('users').document(user_id).collection('diaries').document(diary_id).collection('entries').document()
+    entry_ref.set({
+        'content': content,
+        'created_at': firestore.SERVER_TIMESTAMP
+    })
+
+    db.collection('users').document(user_id).collection('diaries').document(diary_id).update({
+        'last_edited': firestore.SERVER_TIMESTAMP
+    })
+
+    return redirect(url_for('diary_page', diary_id=diary_id))
 
 @app.route('/verify_token', methods=['POST'])
 def verify_token():
     id_token = request.json.get("idToken")
     try:
         decoded_token = auth.verify_id_token(id_token)
-        print("✅ Firebase token verified:", decoded_token['uid'])  # Debug log
-        session['user'] = decoded_token  # Store the user's token/session info
+        print("✅ Firebase token verified:", decoded_token['uid'])
+        session['user'] = decoded_token
         return {'success': True}, 200
     except Exception as e:
         print("❌ Token verification failed:", e)
