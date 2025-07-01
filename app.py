@@ -177,10 +177,9 @@ def verify_token():
     except Exception as e:
         return {'success': False, 'error': str(e)}, 401
 
-@app.route('/logout')
-def logout():
-    session.pop('user', None)
-    return redirect(url_for('authenticate'))
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('404.html'), 404
 
 # 🔥 Run the app
 if __name__ == '__main__':
