@@ -2,11 +2,10 @@
 <html lang="en">
 
 <head>
-  <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='favicon.svg') }}">
-
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>MyDiary - Private Online Journal</title>
+  <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/logo.png') }}">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap"
     rel="stylesheet" />
@@ -28,12 +27,10 @@
   <!-- Header -->
   <header class="sticky top-0 z-50 flex items-center justify-between px-6 md:px-16 py-4 border-b bg-white shadow-sm">
     <div class="flex items-center gap-2 text-xl font-bold text-blue-700">
-      <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 48 48">
-        <path d="M47.2426 24L24 47.2426L0.757355 24L24 0.757355L47.2426 24ZM12.2426 21H35.7574L24 9.24264L12.2426 21Z">
-        </path>
-      </svg>
+      <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo" class="w-6 h-6" />
       <span>MyDiary</span>
     </div>
+
 
     <div class="hidden md:flex items-center gap-6 text-sm">
       <a href="#features" class="hover:text-blue-500">Features</a>
@@ -113,16 +110,16 @@
       <h2 class="text-3xl font-bold mb-4">Contact Us</h2>
       <p class="text-gray-600 mb-6">Connect with us through your favorite platform.</p>
       <div class="flex justify-center gap-6 flex-wrap">
-        <a href="mailto:hello@mydiary.com" target="_blank" title="Email">
+        <a href="mailto:souravdebnath9838@gmail.com" target="_blank" title="Email">
           <img src="/static/images/email.png" alt="Email" class="w-8 h-8 hover:scale-110 transition-transform" />
         </a>
-        <a href="https://x.com/mydiary" target="_blank" title="X / Twitter">
+        <a href="https://x.com/SouravDebnath25" target="_blank" title="X / Twitter">
           <img src="/static/images/x.png" alt="X" class="w-8 h-8 hover:scale-110 transition-transform" />
         </a>
-        <a href="https://github.com/mydiary" target="_blank" title="GitHub">
+        <a href="https://github.com/Sourav2507" target="_blank" title="GitHub">
           <img src="/static/images/github.png" alt="GitHub" class="w-8 h-8 hover:scale-110 transition-transform" />
         </a>
-        <a href="https://linkedin.com/company/mydiary" target="_blank" title="LinkedIn">
+        <a href="https://www.linkedin.com/in/sourav-debnath-996479254/" target="_blank" title="LinkedIn">
           <img src="/static/images/linkedin.png" alt="LinkedIn" class="w-8 h-8 hover:scale-110 transition-transform" />
         </a>
       </div>

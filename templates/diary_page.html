@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8" />
     <title>{{ diary_title }}</title>
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/logo.png') }}">
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -22,7 +23,11 @@
         <!-- Fixed Header -->
         <header
             class="fixed top-0 left-0 right-0 z-50 flex justify-between items-center px-10 py-5 border-b bg-white/60 backdrop-blur-md">
-            <h1 class="text-xl font-bold text-[#121417]">{{ diary_title }}</h1>
+            <div class="flex items-center gap-2">
+                <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo" class="w-7 h-7">
+                <h1 class="text-xl font-bold text-[#121417]">{{ diary_title }}</h1>
+            </div>
+
             <a href="/dashboard" class="text-blue-600 hover:underline font-medium">← Back to Dashboard</a>
         </header>
 

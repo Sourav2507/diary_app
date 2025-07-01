@@ -2,12 +2,10 @@
 <html lang="en">
 
 <head>
-    <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='favicon.svg') }}">
-
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Dashboard - Diary App</title>
-
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/logo.png') }}">
     <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin />
     <link rel="stylesheet" as="style" onload="this.rel='stylesheet'"
         href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;700;800&display=swap" />
@@ -51,13 +49,10 @@
         class="fixed top-0 left-0 right-0 bg-white z-50 shadow-sm flex items-center justify-between px-10 py-4 border-b border-gray-200">
         <!-- Logo & Title -->
         <div class="flex items-center gap-2 text-blue-700 font-bold text-xl">
-            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 48 48">
-                <path
-                    d="M47.2426 24L24 47.2426L0.757355 24L24 0.757355L47.2426 24ZM12.2426 21H35.7574L24 9.24264L12.2426 21Z">
-                </path>
-            </svg>
+            <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo" class="w-6 h-6" />
             <span>MyDiary</span>
         </div>
+
 
         <!-- Create Diary Button -->
         <button onclick="openModal()"

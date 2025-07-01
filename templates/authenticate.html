@@ -2,11 +2,10 @@
 <html lang="en">
 
 <head>
-  <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='favicon.svg') }}">
-
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Authenticate - Diary App</title>
+  <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/logo.png') }}">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="stylesheet"
     href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" />
@@ -54,12 +53,10 @@
 <body
   class="min-h-screen bg-gradient-to-br from-blue-100 via-white to-purple-100 flex flex-col items-center justify-center px-4">
   <div class="flex items-center gap-2 text-blue-700 font-bold text-2xl sm:text-3xl mb-6 fade-in">
-    <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 48 48">
-      <path d="M47.2426 24L24 47.2426L0.757355 24L24 0.757355L47.2426 24ZM12.2426 21H35.7574L24 9.24264L12.2426 21Z">
-      </path>
-    </svg>
+    <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo" class="w-8 h-8" />
     <span>MyDiary</span>
   </div>
+
 
 
   <div class="glass rounded-2xl shadow-xl p-10 w-full max-w-md fade-in">
