@@ -1,9 +1,11 @@
 import os
 import json
-from flask import Flask, render_template, redirect, request, session, url_for
+from flask import Flask, render_template, redirect, request, session, url_for,jsonify
 import firebase_admin
-from firebase_admin import credentials, auth
+from firebase_admin import credentials, auth,firestore
 from functools import wraps
+
+db = firestore.client()
 
 # 🔐 Load Firebase credentials from environment
 firebase_json = os.environ.get("FIREBASE_CREDENTIALS_JSON")
@@ -28,8 +30,6 @@ def login_required(f):
         return f(*args, **kwargs)
     return wrapper
 
-# 🌐 Routes
-
 @app.route('/')
 def landing():
     if 'user' in session:
@@ -46,6 +46,44 @@ def authenticate():
 @login_required
 def dashboard():
     return render_template('dashboard.html')
+
+from flask import jsonify
+
+@app.route('/create_diary', methods=['POST'])
+@login_required
+def create_diary():
+    data = request.get_json()
+    title = data.get('title')
+    theme = data.get('theme')
+
+    user_id = session['user']['uid']
+
+    diary_ref = db.collection('users').document(user_id).collection('diaries').document()
+    diary_ref.set({
+        'title': title,
+        'theme': theme,
+        'created_at': firestore.SERVER_TIMESTAMP,
+        'last_edited': firestore.SERVER_TIMESTAMP
+    })
+
+    return jsonify({'success': True, 'diary_id': diary_ref.id})
+
+@app.route('/api/diaries')
+@login_required
+def get_diaries():
+    user_id = session['user']['uid']
+    diaries_ref = db.collection('users').document(user_id).collection('diaries')
+    diaries = diaries_ref.order_by('last_edited', direction=firestore.Query.DESCENDING).stream()
+
+    diary_list = [{
+        'id': diary.id,
+        'title': diary.to_dict().get('title'),
+        'theme': diary.to_dict().get('theme'),
+        'last_edited': diary.to_dict().get('last_edited').isoformat() if diary.to_dict().get('last_edited') else ''
+    } for diary in diaries]
+
+    return jsonify(diary_list)
+
 
 @app.route('/create_entry')
 @login_required

@@ -1,100 +1,217 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+
+<head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Dashboard - Diary App</title>
 
     <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin />
-    <link
-      rel="stylesheet"
-      as="style"
-      onload="this.rel='stylesheet'"
-      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;700;800&display=swap"
-    />
+    <link rel="stylesheet" as="style" onload="this.rel='stylesheet'"
+        href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;700;800&display=swap" />
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 
     <style>
-      body {
-        font-family: "Plus Jakarta Sans", sans-serif;
-      }
+        body {
+            font-family: "Plus Jakarta Sans", sans-serif;
+        }
 
-      .diary-card {
-        transition: transform 0.2s ease, box-shadow 0.2s ease;
-      }
+        .diary-card {
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
 
-      .diary-card:hover {
-        transform: scale(1.03);
-        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-      }
+        .diary-card:hover {
+            transform: scale(1.03);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .animate-fade-in {
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
     </style>
-  </head>
-  <body class="bg-white min-h-screen flex flex-col">
+</head>
+
+<body class="bg-white min-h-screen flex flex-col">
 
     <!-- Fixed Navbar -->
-    <header class="fixed top-0 left-0 right-0 bg-white z-50 shadow-sm flex items-center justify-between px-10 py-4 border-b border-gray-200">
-      <div class="flex items-center gap-3 text-[#121416]">
-        <div class="w-5 h-5 text-blue-600">
-          <svg viewBox="0 0 48 48" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-            <path
-              d="M8.57829 8.57829C5.52816 11.6284 3.451 15.5145 2.60947 19.7452C1.76794 23.9758 2.19984 28.361 3.85056 32.3462C5.50128 36.3314 8.29667 39.7376 11.8832 42.134C15.4698 44.5305 19.6865 45.8096 24 45.8096C28.3135 45.8096 32.5302 44.5305 36.1168 42.134C39.7033 39.7375 42.4987 36.3314 44.1494 32.3462C45.8002 28.361 46.2321 23.9758 45.3905 19.7452C44.549 15.5145 42.4718 11.6284 39.4217 8.57829L24 24L8.57829 8.57829Z"
-            />
-          </svg>
+    <header
+        class="fixed top-0 left-0 right-0 bg-white z-50 shadow-sm flex items-center justify-between px-10 py-4 border-b border-gray-200">
+        <div class="flex items-center gap-3 text-[#121416]">
+            <div class="w-5 h-5 text-blue-600">
+                <svg viewBox="0 0 48 48" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                    <path
+                        d="M8.57829 8.57829C5.52816 11.6284 3.451 15.5145 2.60947 19.7452C1.76794 23.9758 2.19984 28.361 3.85056 32.3462C5.50128 36.3314 8.29667 39.7376 11.8832 42.134C15.4698 44.5305 19.6865 45.8096 24 45.8096C28.3135 45.8096 32.5302 44.5305 36.1168 42.134C39.7033 39.7375 42.4987 36.3314 44.1494 32.3462C45.8002 28.361 46.2321 23.9758 45.3905 19.7452C44.549 15.5145 42.4718 11.6284 39.4217 8.57829L24 24L8.57829 8.57829Z" />
+                </svg>
+            </div>
+            <h1 class="text-lg font-bold">Diary App</h1>
         </div>
-        <h1 class="text-lg font-bold">Diary App</h1>
-      </div>
 
-      <div class="flex gap-2">
-        <button class="px-4 py-2 bg-[#5e92c9] text-white rounded-full text-sm font-bold">
-          Create Diary
-        </button>
-        <button class="p-2 bg-gray-100 text-[#121416] rounded-full font-bold">
-          <svg xmlns="http://www.w3.org/2000/svg" width="20px" height="20px" fill="currentColor" viewBox="0 0 256 256">
-            <path d="M224,128a8,8,0,0,1-8,8H136v80a8,8,0,0,1-16,0V136H40a8,8,0,0,1,0-16h80V40a8,8,0,0,1,16,0v80h80A8,8,0,0,1,224,128Z" />
-          </svg>
-        </button>
-      </div>
+        <div class="flex gap-2">
+            <button onclick="openModal()" class="px-4 py-2 bg-[#5e92c9] text-white rounded-full text-sm font-bold">
+                Create Diary
+            </button>
+            <button class="p-2 bg-gray-100 text-[#121416] rounded-full font-bold">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20px" height="20px" fill="currentColor"
+                    viewBox="0 0 256 256">
+                    <path
+                        d="M224,128a8,8,0,0,1-8,8H136v80a8,8,0,0,1-16,0V136H40a8,8,0,0,1,0-16h80V40a8,8,0,0,1,16,0v80h80A8,8,0,0,1,224,128Z" />
+                </svg>
+            </button>
+        </div>
     </header>
 
     <!-- Content Area -->
     <main class="flex-1 pt-24 pb-12 px-6 sm:px-12 relative bg-gray-50">
-      <!-- Soft Background Image -->
-      <div
-        class="absolute inset-0 bg-cover bg-center opacity-20 z-0"
-        style="background-image: url('https://images.unsplash.com/photo-1509021436665-8f07dbf5bf1d?auto=format&fit=crop&w=1950&q=80');"
-      ></div>
-
-      <!-- Diaries Area -->
-      <div class="relative z-10">
-        <!-- No Diaries Message -->
-        <div class="mb-10">
-          <div class="flex flex-col gap-4 bg-white/90 backdrop-blur-md p-6 rounded-xl shadow max-w-md">
-            <div
-              class="aspect-video bg-center bg-cover rounded-xl shadow"
-              style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCjpG3h09dZzBvZTxZ3Rqb9fskXpYApxNeunjc9VGK3yuc6WGJV9IKC2YrwUT4K1qdodE4LW2HL66OVv7d4B6bp5wkb845rL0ul6_jwSApzept3KjPXk3b_y4C-LMtIfNwf7Dh5PphZADeYvTWBsyLYSojJDScpToHQ-xxL4wRvqoRRM3z1b72mw8r-g5H3GT0SOvpds4KBkFmKd5eE5snI8yP48NoRX6sE-0ChTI7USVJhXBU32careWNoNj2QEgB1dI0CAke3C5M');"
-            ></div>
-            <p class="text-lg font-bold text-center text-gray-800">No diaries yet. Create your first one!</p>
-            <p class="text-sm text-gray-600 text-center">Start documenting your thoughts and experiences.</p>
-            <button class="bg-[#5e92c9] text-white px-4 py-2 rounded-full font-semibold shadow hover:bg-[#4a7bb4] transition">
-              Create Diary
-            </button>
-          </div>
+        <!-- Soft Background Image -->
+        <div class="absolute inset-0 bg-cover bg-center opacity-20 z-0"
+            style="background-image: url('https://images.unsplash.com/photo-1509021436665-8f07dbf5bf1d?auto=format&fit=crop&w=1950&q=80');">
         </div>
 
-        <!-- Diary Cards Grid -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 items-start">
-          <!-- Example Card -->
-          <div class="bg-white rounded-xl shadow diary-card overflow-hidden">
-            <img src="/static/images/diary_cover.jpg" alt="Diary" class="w-full h-40 object-cover" />
-            <div class="p-4">
-              <h3 class="font-bold text-lg text-gray-800">My Travel Diary</h3>
-              <p class="text-sm text-gray-600">Last edited on: Jun 30, 2025</p>
+        <!-- Diaries Area -->
+        <div class="relative z-10">
+            <!-- No Diaries Message -->
+            <div class="mb-10">
+                <div class="flex flex-col gap-4 bg-white/90 backdrop-blur-md p-6 rounded-xl shadow max-w-md">
+                    <div class="aspect-video bg-center bg-cover rounded-xl shadow"
+                        style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCjpG3h09dZzBvZTxZ3Rqb9fskXpYApxNeunjc9VGK3yuc6WGJV9IKC2YrwUT4K1qdodE4LW2HL66OVv7d4B6bp5wkb845rL0ul6_jwSApzept3KjPXk3b_y4C-LMtIfNwf7Dh5PphZADeYvTWBsyLYSojJDScpToHQ-xxL4wRvqoRRM3z1b72mw8r-g5H3GT0SOvpds4KBkFmKd5eE5snI8yP48NoRX6sE-0ChTI7USVJhXBU32careWNoNj2QEgB1dI0CAke3C5M');">
+                    </div>
+                    <p class="text-lg font-bold text-center text-gray-800">No diaries yet. Create your first one!</p>
+                    <p class="text-sm text-gray-600 text-center">Start documenting your thoughts and experiences.</p>
+                    <button onclick="openModal()"
+                        class="bg-[#5e92c9] text-white px-4 py-2 rounded-full font-semibold shadow hover:bg-[#4a7bb4] transition">
+                        Create Diary
+                    </button>
+                </div>
             </div>
-          </div>
 
-          <!-- More cards here dynamically via Jinja later -->
+            <!-- Diary Cards Grid -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 items-start">
+                <!-- Example Card -->
+                <div class="bg-white rounded-xl shadow diary-card overflow-hidden">
+                    <img src="/static/images/diary_cover.jpg" alt="Diary" class="w-full h-40 object-cover" />
+                    <div class="p-4">
+                        <h3 class="font-bold text-lg text-gray-800">My Travel Diary</h3>
+                        <p class="text-sm text-gray-600">Last edited on: Jun 30, 2025</p>
+                    </div>
+                </div>
+
+                <!-- More cards via Jinja later -->
+            </div>
         </div>
-      </div>
     </main>
-  </body>
+
+    <!-- Create Diary Modal -->
+    <div id="createModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-xl p-8 w-full max-w-md shadow-lg animate-fade-in">
+            <h2 class="text-xl font-bold mb-4">New Diary</h2>
+
+            <form id="diaryForm" onsubmit="createDiary(event)">
+                <label class="block mb-3">
+                    <span class="text-sm font-medium text-gray-700">Diary Title</span>
+                    <input type="text" id="diaryTitle" required
+                        class="mt-1 w-full px-4 py-2 border rounded-lg focus:ring focus:ring-blue-200"
+                        placeholder="e.g. Summer Journal" />
+                </label>
+
+                <label class="block mb-4">
+                    <span class="text-sm font-medium text-gray-700">Select Theme</span>
+                    <select id="diaryTheme" class="mt-1 w-full px-4 py-2 border rounded-lg">
+                        <option value="light">Light</option>
+                        <option value="parchment">Parchment</option>
+                        <option value="night">Night Mode</option>
+                    </select>
+                </label>
+
+                <div class="flex justify-end gap-3">
+                    <button type="button" onclick="closeModal()"
+                        class="px-4 py-2 rounded bg-gray-300 hover:bg-gray-400">Cancel</button>
+                    <button type="submit"
+                        class="px-4 py-2 rounded bg-blue-600 text-white hover:bg-blue-700">Create</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script>
+        function openModal() {
+            document.getElementById("createModal").classList.remove("hidden");
+        }
+
+        function closeModal() {
+            document.getElementById("createModal").classList.add("hidden");
+        }
+
+        function createDiary(event) {
+            event.preventDefault();
+
+            const title = document.getElementById('diaryTitle').value;
+            const theme = document.getElementById('diaryTheme').value;
+
+            fetch('/create_diary', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ title, theme })
+            })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        closeModal();
+                        fetchDiaries();  // Refresh UI
+                    } else {
+                        alert("Failed to create diary.");
+                    }
+                })
+                .catch(err => {
+                    console.error("Create diary error:", err);
+                    alert("Something went wrong.");
+                });
+        }
+
+        function fetchDiaries() {
+            fetch('/api/diaries')
+                .then(res => res.json())
+                .then(diaries => {
+                    const grid = document.querySelector('.grid');
+                    grid.innerHTML = "";  // Clear existing
+
+                    diaries.forEach(d => {
+                        const card = document.createElement('div');
+                        card.className = `bg-white rounded-xl shadow diary-card overflow-hidden ${getThemeClass(d.theme)}`;
+                        card.innerHTML = `
+                    <img src="/static/images/diary_cover.jpg" alt="Diary" class="w-full h-40 object-cover" />
+                    <div class="p-4">
+                        <h3 class="font-bold text-lg">${d.title}</h3>
+                        <p class="text-sm text-gray-600">Last edited: ${new Date(d.last_edited).toLocaleDateString()}</p>
+                    </div>
+                `;
+                        grid.appendChild(card);
+                    });
+                });
+        }
+
+        function getThemeClass(theme) {
+            if (theme === 'night') return 'bg-gray-900 text-white';
+            if (theme === 'parchment') return 'bg-yellow-50';
+            return 'bg-white';
+        }
+
+        document.addEventListener('DOMContentLoaded', fetchDiaries);
+    </script>
+
+
+</body>
+
 </html>
