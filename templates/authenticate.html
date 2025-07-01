@@ -8,17 +8,37 @@
   <link rel="stylesheet"
     href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" />
   <script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
-
   <style>
     body {
       font-family: "Plus Jakarta Sans", sans-serif;
     }
-    .btn-style {
-      width: 100%;
-      height: 3rem;
-      border-radius: 0.75rem;
-      font-weight: bold;
-      color: #121417;
+
+    .fade-in {
+      animation: fadeIn 1s ease-out forwards;
+    }
+
+    @keyframes fadeIn {
+      0% {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .glow-hover:hover {
+      box-shadow: 0 0 10px rgba(0, 123, 255, 0.5), 0 0 20px rgba(0, 123, 255, 0.3);
+      transform: scale(1.05);
+      transition: all 0.3s ease-in-out;
+    }
+
+    .glass {
+      background: rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.3);
     }
   </style>
 
@@ -27,34 +47,30 @@
   <script defer src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
 </head>
 
-<body class="bg-white">
-  <div class="min-h-screen flex flex-col">
-    <!-- Header -->
-    <header class="flex items-center justify-between px-6 py-4 border-b border-gray-200">
-      <h2 class="text-blue-600 text-lg font-bold flex items-center gap-2">
-        <svg class="w-5 h-5" viewBox="0 0 48 48" fill="currentColor">
-          <path
-            d="M8.57829 8.57829C5.52816 11.6284 3.451 15.5145 2.60947 19.7452C1.76794 23.9758 2.19984 28.361 3.85056 32.3462C5.50128 36.3314 8.29667 39.7376 11.8832 42.134C15.4698 44.5305 19.6865 45.8096 24 45.8096C28.3135 45.8096 32.5302 44.5305 36.1168 42.134C39.7033 39.7375 42.4987 36.3314 44.1494 32.3462C45.8002 28.361 46.2321 23.9758 45.3905 19.7452C44.549 15.5145 42.4718 11.6284 39.4217 8.57829L24 24L8.57829 8.57829Z">
-          </path>
-        </svg>
-        Diary App
-      </h2>
-    </header>
+<body class="min-h-screen bg-gradient-to-br from-blue-100 via-white to-purple-100 flex flex-col items-center justify-center px-4">
+  <div class="text-blue-700 text-3xl font-extrabold flex items-center gap-3 mb-6 fade-in">
+    <svg class="w-8 h-8" viewBox="0 0 48 48" fill="currentColor">
+      <path
+        d="M8.57829 8.57829C5.52816 11.6284 3.451 15.5145 2.60947 19.7452C1.76794 23.9758 2.19984 28.361 3.85056 32.3462C5.50128 36.3314 8.29667 39.7376 11.8832 42.134C15.4698 44.5305 19.6865 45.8096 24 45.8096C28.3135 45.8096 32.5302 44.5305 36.1168 42.134C39.7033 39.7375 42.4987 36.3314 44.1494 32.3462C45.8002 28.361 46.2321 23.9758 45.3905 19.7452C44.549 15.5145 42.4718 11.6284 39.4217 8.57829L24 24L8.57829 8.57829Z">
+      </path>
+    </svg>
+    Diary App
+  </div>
 
-    <!-- Authentication Options -->
-    <main class="flex-1 flex justify-center px-4 py-10">
-      <div class="w-full max-w-md space-y-6">
-        <h2 class="text-center text-2xl font-bold text-gray-800">Sign in to continue</h2>
+  <div class="glass rounded-2xl shadow-xl p-10 w-full max-w-md fade-in">
+    <h2 class="text-2xl font-bold text-center text-gray-800 mb-6">Sign in to Continue</h2>
 
-        <!-- Social Login Icons -->
-        <div class="flex justify-center gap-6">
-          <img src="/static/images/google.png" alt="Google" class="w-10 h-10 cursor-pointer"
-            onclick="loginWithGoogle()" />
-          <img src="/static/images/github.png" alt="GitHub" class="w-10 h-10 cursor-pointer"
-            onclick="loginWithGithub()" />
-        </div>
-      </div>
-    </main>
+    <div class="flex justify-center gap-8">
+      <img src="/static/images/google.png" alt="Google"
+        class="w-12 h-12 cursor-pointer rounded-full transition-transform glow-hover"
+        onclick="loginWithGoogle()" />
+
+      <img src="/static/images/github.png" alt="GitHub"
+        class="w-12 h-12 cursor-pointer rounded-full transition-transform glow-hover"
+        onclick="loginWithGithub()" />
+    </div>
+
+    <p class="text-sm text-center text-gray-600 mt-6">Secure login using your favorite platform.</p>
   </div>
 
   <!-- Firebase Auth Logic -->
