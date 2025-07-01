@@ -75,8 +75,10 @@
 
         <!-- Social Login Icons -->
         <div class="flex justify-center gap-6">
-          <img src="/static/images/google.png" alt="Google" class="w-10 h-10 cursor-pointer" onclick="loginWithGoogle()" />
-          <img src="/static/images/github.png" alt="GitHub" class="w-10 h-10 cursor-pointer" onclick="loginWithGithub()" />
+          <img src="/static/images/google.png" alt="Google" class="w-10 h-10 cursor-pointer"
+            onclick="loginWithGoogle()" />
+          <img src="/static/images/github.png" alt="GitHub" class="w-10 h-10 cursor-pointer"
+            onclick="loginWithGithub()" />
         </div>
       </div>
     </main>
@@ -84,21 +86,24 @@
 
   <!-- Scripts after Firebase loads -->
   <script>
-    document.addEventListener("DOMContentLoaded", function () {
+    window.onload = function () {
+      // ✅ Firebase Config
       const firebaseConfig = {
         apiKey: "AIzaSyASP_3BfM1u60twXnQbQhh5sWohzyWsfsw",
         authDomain: "diaryapp-18669.firebaseapp.com",
         databaseURL: "https://diaryapp-18669-default-rtdb.asia-southeast1.firebasedatabase.app",
         projectId: "diaryapp-18669",
-        storageBucket: "diaryapp-18669.appspot.com",
+        storageBucket: "diaryapp-18669.firebasestorage.app",
         messagingSenderId: "374688752038",
         appId: "1:374688752038:web:77b7452c50122cb2dfaf67",
         measurementId: "G-7KHCESZMJ9"
       };
 
+      // ✅ Initialize Firebase
       firebase.initializeApp(firebaseConfig);
       const auth = firebase.auth();
 
+      // ✅ Auth functions
       window.authenticateUser = function () {
         const email = document.getElementById("email").value;
         const password = document.getElementById("password").value;
@@ -131,26 +136,27 @@
       window.loginWithGoogle = function () {
         const provider = new firebase.auth.GoogleAuthProvider();
         auth.signInWithPopup(provider)
-          .then((result) => {
+          .then(() => {
             window.location.href = "/dashboard";
           })
           .catch((error) => {
-            alert("Google Login Error: " + error.message);
+            alert("Google login failed: " + error.message);
           });
       };
 
       window.loginWithGithub = function () {
         const provider = new firebase.auth.GithubAuthProvider();
         auth.signInWithPopup(provider)
-          .then((result) => {
+          .then(() => {
             window.location.href = "/dashboard";
           })
           .catch((error) => {
-            alert("GitHub Login Error: " + error.message);
+            alert("GitHub login failed: " + error.message);
           });
       };
-    });
+    };
   </script>
+
 </body>
 
 </html>
