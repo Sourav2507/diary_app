@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -22,6 +23,7 @@
         opacity: 0;
         transform: translateY(20px);
       }
+
       100% {
         opacity: 1;
         transform: translateY(0);
@@ -47,7 +49,8 @@
   <script defer src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
 </head>
 
-<body class="min-h-screen bg-gradient-to-br from-blue-100 via-white to-purple-100 flex flex-col items-center justify-center px-4">
+<body
+  class="min-h-screen bg-gradient-to-br from-blue-100 via-white to-purple-100 flex flex-col items-center justify-center px-4">
   <div class="text-blue-700 text-3xl font-extrabold flex items-center gap-3 mb-6 fade-in">
     <svg class="w-8 h-8" viewBox="0 0 48 48" fill="currentColor">
       <path
@@ -58,16 +61,14 @@
   </div>
 
   <div class="glass rounded-2xl shadow-xl p-10 w-full max-w-md fade-in">
-    <h2 class="text-2xl font-bold text-center text-gray-800 mb-6">Sign in to Continue</h2>
+    <h2 class="text-2xl font-bold text-center text-gray-800 mb-6">Sign in to Continue.</h2>
 
     <div class="flex justify-center gap-8">
       <img src="/static/images/google.png" alt="Google"
-        class="w-12 h-12 cursor-pointer rounded-full transition-transform glow-hover"
-        onclick="loginWithGoogle()" />
+        class="w-12 h-12 cursor-pointer rounded-full transition-transform glow-hover" onclick="loginWithGoogle()" />
 
       <img src="/static/images/github.png" alt="GitHub"
-        class="w-12 h-12 cursor-pointer rounded-full transition-transform glow-hover"
-        onclick="loginWithGithub()" />
+        class="w-12 h-12 cursor-pointer rounded-full transition-transform glow-hover" onclick="loginWithGithub()" />
     </div>
 
     <p class="text-sm text-center text-gray-600 mt-6">Secure login using your favorite platform.</p>
@@ -79,31 +80,49 @@
       const firebaseConfig = {
         apiKey: "AIzaSyASP_3BfM1u60twXnQbQhh5sWohzyWsfsw",
         authDomain: "diaryapp-18669.firebaseapp.com",
-        databaseURL: "https://diaryapp-18669-default-rtdb.asia-southeast1.firebasedatabase.app",
         projectId: "diaryapp-18669",
-        storageBucket: "diaryapp-18669.firebasestorage.app",
-        messagingSenderId: "374688752038",
-        appId: "1:374688752038:web:77b7452c50122cb2dfaf67",
-        measurementId: "G-7KHCESZMJ9"
       };
 
       firebase.initializeApp(firebaseConfig);
       const auth = firebase.auth();
 
+      function sendTokenToServer(idToken) {
+        fetch("/verify_token", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ idToken })
+        })
+          .then(res => res.json())
+          .then(data => {
+            if (data.success) {
+              window.location.href = "/dashboard";
+            } else {
+              alert("Token verification failed");
+            }
+          })
+          .catch(err => console.error("Token verification error:", err));
+      }
+
       window.loginWithGoogle = function () {
         const provider = new firebase.auth.GoogleAuthProvider();
         auth.signInWithPopup(provider)
-          .then(() => window.location.href = "/dashboard")
+          .then(result => result.user.getIdToken())
+          .then(sendTokenToServer)
           .catch(error => alert("Google login failed: " + error.message));
       };
 
       window.loginWithGithub = function () {
         const provider = new firebase.auth.GithubAuthProvider();
         auth.signInWithPopup(provider)
-          .then(() => window.location.href = "/dashboard")
+          .then(result => result.user.getIdToken())
+          .then(sendTokenToServer)
           .catch(error => alert("GitHub login failed: " + error.message));
       };
     };
   </script>
+
 </body>
+
 </html>

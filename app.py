@@ -15,6 +15,10 @@ firebase_admin.initialize_app(cred)
 app = Flask(__name__)
 app.secret_key = os.environ.get("FLASK_SECRET_KEY", "default_secret_key")
 
+# ✅ Recommended session configs for HTTPS deployment (e.g., Render)
+app.config['SESSION_COOKIE_SECURE'] = True  # for HTTPS
+app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'  # safe default for most use cases
+
 # 🔐 Login required decorator
 def login_required(f):
     @wraps(f)
@@ -53,10 +57,11 @@ def verify_token():
     id_token = request.json.get("idToken")
     try:
         decoded_token = auth.verify_id_token(id_token)
-        session['user'] = decoded_token  # You can store user info like email/uid as needed
+        print("✅ Firebase token verified:", decoded_token['uid'])  # Debug log
+        session['user'] = decoded_token  # Store the user's token/session info
         return {'success': True}, 200
     except Exception as e:
-        print("Token verification failed:", e)
+        print("❌ Token verification failed:", e)
         return {'success': False, 'error': str(e)}, 401
 
 @app.route('/logout')
