@@ -2,6 +2,8 @@
 <html lang="en">
 
 <head>
+    <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='favicon.svg') }}">
+
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Dashboard - Diary App</title>
@@ -47,20 +49,23 @@
     <!-- Navbar -->
     <header
         class="fixed top-0 left-0 right-0 bg-white z-50 shadow-sm flex items-center justify-between px-10 py-4 border-b border-gray-200">
-        <div class="flex items-center gap-3 text-[#121416]">
-            <div class="w-5 h-5 text-blue-600">
-                <svg viewBox="0 0 48 48" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                    <path
-                        d="M8.57829 8.57829C5.52816 11.6284 3.451 15.5145 2.60947 19.7452C1.76794 23.9758 2.19984 28.361 3.85056 32.3462C5.50128 36.3314 8.29667 39.7376 11.8832 42.134C15.4698 44.5305 19.6865 45.8096 24 45.8096C28.3135 45.8096 32.5302 44.5305 36.1168 42.134C39.7033 39.7375 42.4987 36.3314 44.1494 32.3462C45.8002 28.361 46.2321 23.9758 45.3905 19.7452C44.549 15.5145 42.4718 11.6284 39.4217 8.57829L24 24L8.57829 8.57829Z" />
-                </svg>
-            </div>
-            <h1 class="text-lg font-bold">Diary App</h1>
+        <!-- Logo & Title -->
+        <div class="flex items-center gap-2 text-blue-700 font-bold text-xl">
+            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 48 48">
+                <path
+                    d="M47.2426 24L24 47.2426L0.757355 24L24 0.757355L47.2426 24ZM12.2426 21H35.7574L24 9.24264L12.2426 21Z">
+                </path>
+            </svg>
+            <span>MyDiary</span>
         </div>
 
-        <button onclick="openModal()" class="px-4 py-2 bg-[#5e92c9] text-white rounded-full text-sm font-bold">
+        <!-- Create Diary Button -->
+        <button onclick="openModal()"
+            class="px-4 py-2 bg-[#5e92c9] text-white rounded-full text-sm font-bold hover:bg-[#4a7bb0]">
             Create Diary
         </button>
     </header>
+
 
     <!-- Content -->
     <main class="flex-1 pt-24 pb-12 px-6 sm:px-12 relative bg-gray-50">
