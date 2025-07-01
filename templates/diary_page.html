@@ -17,27 +17,28 @@
 </head>
 
 <body class="min-h-screen bg-cover bg-center" style="background-image: url('{{ background_image_url }}');">
-    <div class="min-h-screen flex flex-col bg-white bg-opacity-50 backdrop-blur-lg">
+    <div class="min-h-screen flex flex-col">
 
-        <!-- Header -->
-        <header class="flex justify-between items-center px-10 py-5 border-b">
+        <!-- Fixed Header -->
+        <header
+            class="fixed top-0 left-0 right-0 z-50 flex justify-between items-center px-10 py-5 border-b bg-white/60 backdrop-blur-md">
             <h1 class="text-xl font-bold text-[#121417]">{{ diary_title }}</h1>
             <a href="/dashboard" class="text-blue-600 hover:underline font-medium">← Back to Dashboard</a>
         </header>
 
-        <!-- Scrollable messages -->
-        <main class="flex-1 overflow-y-auto px-4 py-6 max-w-3xl mx-auto space-y-6" id="entriesContainer">
+        <!-- Scrollable Entries Section -->
+        <main id="entriesContainer" class="flex-1 overflow-y-auto px-6 pt-28 pb-6 max-w-3xl mx-auto space-y-6">
             {% for entry in entries %}
-            <div class="bg-white bg-opacity-80 p-5 rounded-xl shadow border border-gray-200">
+            <div class="bg-white bg-opacity-90 p-5 rounded-xl shadow border border-gray-200">
                 <p class="text-[#121417] text-sm font-semibold">{{ entry.date }}</p>
                 <p class="text-[#677583] text-base mt-2 whitespace-pre-wrap">{{ entry.content }}</p>
             </div>
             {% endfor %}
         </main>
 
-        <!-- Send box -->
+        <!-- Transparent Sticky Footer -->
         <form method="POST" action="/add_entry/{{ diary_id }}"
-            class="bg-white/40 backdrop-blur-md px-4 py-4 sticky bottom-0">
+            class="sticky bottom-0 w-full bg-transparent backdrop-blur-md px-4 py-4">
             <div class="max-w-3xl mx-auto flex gap-2">
                 <textarea name="content" placeholder="What's on your mind..." required rows="2"
                     class="flex-1 resize-none rounded-xl p-3 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-300 bg-white/80 backdrop-blur-sm"></textarea>
@@ -48,5 +49,6 @@
 
     </div>
 </body>
+
 
 </html>
