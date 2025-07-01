@@ -132,10 +132,15 @@
                 .catch((regError) => {
                   alert("Registration failed: " + regError.message);
                 });
+            } else if (error.code === "auth/wrong-password") {
+              alert("Wrong password! Please try again.");
+            } else if (error.code === "auth/invalid-email") {
+              alert("Invalid email address.");
             } else {
               alert("Login failed: " + error.message);
             }
           });
+
       };
 
 
