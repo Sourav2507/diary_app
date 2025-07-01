@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -14,18 +13,6 @@
     body {
       font-family: "Plus Jakarta Sans", sans-serif;
     }
-
-    .input-style {
-      width: 100%;
-      height: 3.5rem;
-      border-radius: 0.75rem;
-      background-color: #f1f2f4;
-      padding: 0 1rem;
-      font-size: 1rem;
-      color: #121417;
-      outline: none;
-    }
-
     .btn-style {
       width: 100%;
       height: 3rem;
@@ -54,24 +41,10 @@
       </h2>
     </header>
 
-    <!-- Authentication Form -->
+    <!-- Authentication Options -->
     <main class="flex-1 flex justify-center px-4 py-10">
       <div class="w-full max-w-md space-y-6">
-        <h2 class="text-center text-2xl font-bold text-gray-800">Continue to your Dashboard</h2>
-
-        <div class="space-y-4">
-          <input type="email" id="email" placeholder="Email" class="input-style" required />
-          <input type="password" id="password" placeholder="Password" class="input-style" required />
-          <button onclick="authenticateUser()" class="btn-style bg-[#d2e2f3] hover:bg-[#c2d9ec]">Continue</button>
-        </div>
-
-        <p class="text-center text-sm text-[#677583]">If you're new, an account will be created for you.</p>
-
-        <div class="flex items-center justify-center gap-2 text-gray-500 text-sm">
-          <hr class="flex-1 border-gray-300" />
-          OR
-          <hr class="flex-1 border-gray-300" />
-        </div>
+        <h2 class="text-center text-2xl font-bold text-gray-800">Sign in to continue</h2>
 
         <!-- Social Login Icons -->
         <div class="flex justify-center gap-6">
@@ -84,10 +57,9 @@
     </main>
   </div>
 
-  <!-- Scripts after Firebase loads -->
+  <!-- Firebase Auth Logic -->
   <script>
     window.onload = function () {
-      // ✅ Firebase Config
       const firebaseConfig = {
         apiKey: "AIzaSyASP_3BfM1u60twXnQbQhh5sWohzyWsfsw",
         authDomain: "diaryapp-18669.firebaseapp.com",
@@ -99,71 +71,23 @@
         measurementId: "G-7KHCESZMJ9"
       };
 
-      // ✅ Initialize Firebase
       firebase.initializeApp(firebaseConfig);
       const auth = firebase.auth();
-
-      // ✅ Auth functions
-      window.authenticateUser = function () {
-        const email = document.getElementById("email").value.trim();
-        const password = document.getElementById("password").value.trim();
-
-        console.log("Trying to sign in with:", email);
-
-        auth.signInWithEmailAndPassword(email, password)
-          .then((userCredential) => {
-            const user = userCredential.user;
-            if (!user.emailVerified) {
-              user.sendEmailVerification();
-              alert("Email not verified. A new verification link has been sent.");
-              return;
-            }
-            window.location.href = "/dashboard";
-          })
-          .catch((error) => {
-            console.error("Sign in error:", error.code, error.message);
-
-            if (error.code === "auth/user-not-found") {
-              // Try to register
-              auth.createUserWithEmailAndPassword(email, password)
-                .then((newUser) => {
-                  newUser.user.sendEmailVerification();
-                  alert("New user created. Verification email sent. Please verify and log in.");
-                })
-                .catch((regError) => {
-                  console.error("Registration failed:", regError.code, regError.message);
-                  alert("Registration failed: " + regError.message);
-                });
-            } else {
-              alert("Login failed: " + error.message);
-            }
-          });
-      };
 
       window.loginWithGoogle = function () {
         const provider = new firebase.auth.GoogleAuthProvider();
         auth.signInWithPopup(provider)
-          .then(() => {
-            window.location.href = "/dashboard";
-          })
-          .catch((error) => {
-            alert("Google login failed: " + error.message);
-          });
+          .then(() => window.location.href = "/dashboard")
+          .catch(error => alert("Google login failed: " + error.message));
       };
 
       window.loginWithGithub = function () {
         const provider = new firebase.auth.GithubAuthProvider();
         auth.signInWithPopup(provider)
-          .then(() => {
-            window.location.href = "/dashboard";
-          })
-          .catch((error) => {
-            alert("GitHub login failed: " + error.message);
-          });
+          .then(() => window.location.href = "/dashboard")
+          .catch(error => alert("GitHub login failed: " + error.message));
       };
     };
   </script>
-
 </body>
-
 </html>
