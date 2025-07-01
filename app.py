@@ -4,23 +4,21 @@ from flask import Flask, render_template, redirect, request, session, url_for, j
 import firebase_admin
 from firebase_admin import credentials, auth, firestore
 from functools import wraps
-from datetime import datetime
 
-# 🔐 Load Firebase credentials from environment
+# 🔐 Firebase setup
 firebase_json = os.environ.get("FIREBASE_CREDENTIALS_JSON")
 cred_dict = json.loads(firebase_json)
 cred = credentials.Certificate(cred_dict)
 firebase_admin.initialize_app(cred)
-
 db = firestore.client()
 
-# 🔧 Flask app setup
+# 🔧 Flask setup
 app = Flask(__name__)
 app.secret_key = os.environ.get("FLASK_SECRET_KEY", "default_secret_key")
 app.config['SESSION_COOKIE_SECURE'] = True
 app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
 
-# 🔐 Login required decorator
+# 🔐 Auth wrapper
 def login_required(f):
     @wraps(f)
     def wrapper(*args, **kwargs):
@@ -28,6 +26,20 @@ def login_required(f):
             return redirect(url_for('authenticate'))
         return f(*args, **kwargs)
     return wrapper
+
+# 🎨 Theme background image map
+def get_theme_image(theme_name):
+    return {
+        'sunset': '/static/images/sunset.jpg',
+        'ocean': '/static/images/ocean.jpg',
+        'mountains': '/static/images/mountains.jpg',
+        'night': '/static/images/night.jpg',
+        'parchment': '/static/images/parchment.jpg',
+        'light': '/static/images/light.jpg'
+    }.get(theme_name, '/static/images/default.jpg')
+
+
+# 🔽 Routes
 
 @app.route('/')
 def landing():
@@ -52,8 +64,8 @@ def create_diary():
     data = request.get_json()
     title = data.get('title')
     theme = data.get('theme')
-
     user_id = session['user']['uid']
+
     diary_ref = db.collection('users').document(user_id).collection('diaries').document()
     diary_ref.set({
         'title': title,
@@ -92,7 +104,6 @@ def delete_diary(diary_id):
         else:
             return jsonify({'success': False, 'message': 'Diary not found'}), 404
     except Exception as e:
-        print("Error deleting diary:", e)
         return jsonify({'success': False, 'message': str(e)}), 500
 
 @app.route('/diary/<diary_id>')
@@ -116,20 +127,14 @@ def diary_page(diary_id):
     for doc in entries_docs:
         data = doc.to_dict()
         created_at = data.get('created_at')
-        if created_at:
-            created_at = created_at.strftime('%B %d, %Y')
+        if hasattr(created_at, 'strftime'):
+            formatted_date = created_at.strftime('%B %d, %Y')
+        else:
+            formatted_date = 'Unknown Date'
         entries.append({
-            'date': created_at or 'Unknown Date',
+            'date': formatted_date,
             'content': data.get('content', '')
         })
-
-    def get_theme_image(theme_name):
-        return {
-            'sunset': '/static/images/sunset.jpg',
-            'ocean': '/static/images/ocean.jpg',
-            'mountains': '/static/images/mountains.jpg',
-            'default_theme': '/static/images/default.jpg'
-        }.get(theme_name, '/static/images/default.jpg')
 
     background_url = get_theme_image(theme)
 
@@ -167,11 +172,9 @@ def verify_token():
     id_token = request.json.get("idToken")
     try:
         decoded_token = auth.verify_id_token(id_token)
-        print("✅ Firebase token verified:", decoded_token['uid'])
         session['user'] = decoded_token
         return {'success': True}, 200
     except Exception as e:
-        print("❌ Token verification failed:", e)
         return {'success': False, 'error': str(e)}, 401
 
 @app.route('/logout')
